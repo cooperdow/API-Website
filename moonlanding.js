@@ -20,13 +20,45 @@ moonData.config(function ($routeProvider)
 moonData.controller('homeController', ['$scope', '$http', function($scope, $http){
 
 
-    $http.get("http://api.burningsoul.in/moon/1428336623")      
+
+}]);
+
+moonData.controller('moonController', ['$scope', '$http', function($scope, $http){
+    $scope.day = '00';
+    $scope.month = '00';
+    $scope.year = '0000';
+
+    $("#sub1").click(function() {
+        $scope.dat = new Date(parseInt($scope.year), parseInt($scope.month - 1), parseInt($scope.day));
+        $scope.date = ($scope.dat.getTime() / 1000);
+        console.log($scope.year + " " + ($scope.month - 1) + " " + $scope.day + " " + $scope.date);
+        $http.get("http://api.burningsoul.in/moon/" + $scope.date)
+            .success(function (outcome) {
+                console.log("Success");
+                $scope.age = "Age: " + outcome.age.toPrecision(3) + " days";
+                $scope.illumination = "Illumination: " + outcome.illumination.toPrecision(4) + "%";
+                $scope.stage = "Stage: " + outcome.stage;
+            })
+
+            .error(function (data, status) {
+                console.log("failed");
+            });
+    });
+}]);
+moonData.controller('secondController', ['$scope', '$http', function($scope, $http){
+
+    $http.get("https://data.nola.gov/api/views/mbxb-ejdy/rows.json?accessType=DOWNLOAD")
+
     .success(function(outcome)
              {
-        console.log(outcome);
+    $scope.callPlacement=[]; 
+    $scope.reason=[];    
         console.log("got it");
-
-            $scope.stage=outcome.stage;
+            for(var i=0; i<outcome.data.length; i++)
+            {
+            $scope.callPlacement.push(outcome.data[i][9]);
+            $scope.reason.push(outcome.data[i][10]);
+            }
     })
 
     .error(function(data, status)
@@ -34,8 +66,3 @@ moonData.controller('homeController', ['$scope', '$http', function($scope, $http
         console.log("failed");
     });
 }]);
-
-moonData.controller('homeController', ['$scope', '$http', function($scope, $http){
-}
-moonData.controller('homeController', ['$scope', '$http', function($scope, $http){
-}
